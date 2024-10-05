@@ -64,7 +64,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     crossAxisSpacing: 8,
                     mainAxisSpacing: 8,
                   ),
-                  itemCount: 19, // Removed one button (decimal point)
+                  itemCount: 20, // Removed one button (decimal point)
                   itemBuilder: (context, index) {
                     return _buildButton(_getButtonText(index), color: _getButtonColor(index));
                   },
@@ -98,15 +98,16 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       '7', '8', '9', '×',
       '4', '5', '6', '-',
       '1', '2', '3', '+',
-      '0', '='
+      '0', '=', 'J', 'M',
     ];
     return buttonTexts[index];
   }
 
   Color _getButtonColor(int index) {
+    if (index >= 18) return const Color(0xFFBD93F9);
     if (index % 4 == 3) return const Color(0xFFFF79C6); // Operators
     if (index < 3) return const Color(0xFF6272A4); // Top row
-    if (index == 18) return const Color(0xFF50FA7B); // Equals
+     // Equals
     return const Color(0xFF44475A); // Numbers and other buttons
   }
 
