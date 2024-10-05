@@ -1,125 +1,214 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const CalculatorApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class CalculatorApp extends StatelessWidget {
+  const CalculatorApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Calculator App',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFF282A36), // Dracula background
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const CalculatorScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class CalculatorScreen extends StatefulWidget {
+  const CalculatorScreen({Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _CalculatorScreenState createState() => _CalculatorScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+class _CalculatorScreenState extends State<CalculatorScreen> {
+  String _output = '0';
+  String _currentNumber = '';
+  String _operation = '';
+  int _firstNumber = 0;
+  bool _isNewCalculation = true;
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+      body: SafeArea(
+        child: Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 300),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  alignment: Alignment.bottomRight,
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    _output,
+                    style: const TextStyle(
+                      fontSize: 48,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFF8F8F2), // Dracula foreground
+                    ),
+                  ),
+                ),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    childAspectRatio: 1,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                  ),
+                  itemCount: 19, // Removed one button (decimal point)
+                  itemBuilder: (context, index) {
+                    return _buildButton(_getButtonText(index), color: _getButtonColor(index));
+                  },
+                ),
+              ],
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  Widget _buildButton(String buttonText, {Color color = const Color(0xFF44475A)}) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        padding: EdgeInsets.zero,
+      ),
+      child: Text(
+        buttonText,
+        style: const TextStyle(fontSize: 24, color: Color(0xFFF8F8F2)),
+      ),
+      onPressed: () => _buttonPressed(buttonText),
+    );
+  }
+
+  String _getButtonText(int index) {
+    const buttonTexts = [
+      'C', '+/-', '%', '÷',
+      '7', '8', '9', '×',
+      '4', '5', '6', '-',
+      '1', '2', '3', '+',
+      '0', '='
+    ];
+    return buttonTexts[index];
+  }
+
+  Color _getButtonColor(int index) {
+    if (index % 4 == 3) return const Color(0xFFFF79C6); // Operators
+    if (index < 3) return const Color(0xFF6272A4); // Top row
+    if (index == 18) return const Color(0xFF50FA7B); // Equals
+    return const Color(0xFF44475A); // Numbers and other buttons
+  }
+
+  void _buttonPressed(String buttonText) {
+    setState(() {
+      if (buttonText == 'C') {
+        _clear();
+      } else if (buttonText == '+/-') {
+        _toggleSign();
+      } else if (buttonText == '%') {
+        _calculatePercentage();
+      } else if ('+-×÷'.contains(buttonText)) {
+        _setOperation(buttonText);
+      } else if (buttonText == '=') {
+        _calculateResult();
+      } else {
+        _appendNumber(buttonText);
+      }
+    });
+  }
+
+  void _clear() {
+    _output = '0';
+    _currentNumber = '';
+    _operation = '';
+    _firstNumber = 0;
+    _isNewCalculation = true;
+  }
+
+  void _toggleSign() {
+    if (_currentNumber.isNotEmpty) {
+      int number = int.parse(_currentNumber);
+      _currentNumber = (-number).toString();
+      _output = _currentNumber;
+    }
+  }
+
+  void _calculatePercentage() {
+    if (_currentNumber.isNotEmpty) {
+      int number = int.parse(_currentNumber);
+      _currentNumber = (number / 100).toString();
+      _output = _currentNumber;
+    }
+  }
+
+  void _setOperation(String op) {
+    if (_currentNumber.isNotEmpty) {
+      _firstNumber = int.parse(_currentNumber);
+      _currentNumber = '';
+      _operation = op;
+      _output = '$_firstNumber $_operation';
+    }
+  }
+
+  void _calculateResult() {
+    if (_currentNumber.isNotEmpty && _operation.isNotEmpty) {
+      int secondNumber = int.parse(_currentNumber);
+      double result;
+      switch (_operation) {
+        case '+':
+          result = _firstNumber + secondNumber.toDouble();
+          break;
+        case '-':
+          result = _firstNumber - secondNumber.toDouble();
+          break;
+        case '×':
+          result = _firstNumber * secondNumber.toDouble();
+          break;
+        case '÷':
+          if (secondNumber != 0) {
+            result = _firstNumber / secondNumber;
+          } else {
+            _output = 'Error';
+            return;
+          }
+          break;
+        default:
+          return;
+      }
+      _output = _formatResult(result);
+      _firstNumber = result.round();
+      _operation = '';
+      _currentNumber = '';
+      _isNewCalculation = true;
+    }
+  }
+
+  void _appendNumber(String number) {
+    if (_isNewCalculation) {
+      _currentNumber = number;
+      _isNewCalculation = false;
+    } else {
+      _currentNumber += number;
+    }
+    _output = _currentNumber;
+  }
+
+  String _formatResult(double result) {
+    if (result == result.roundToDouble()) {
+      return result.toInt().toString();
+    } else {
+      return result.toStringAsFixed(2);
+    }
   }
 }
